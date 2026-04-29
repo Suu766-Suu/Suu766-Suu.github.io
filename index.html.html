@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Suu766 - Web3 & AI · 赛博朋克实时推文">
+  <title>Suu766 • 赛博在线</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap');
+
+    :root {
+      --neon-blue: #00f0ff;
+      --neon-purple: #c026d3;
+      --neon-pink: #ff00aa;
+    }
+
+    * { font-family: 'Inter', system-ui, sans-serif; }
+    .title-font { font-family: 'Space Grotesk', sans-serif; }
+
+    body {
+      background: #0a0a0a;
+      color: #e0f2ff;
+      overflow-x: hidden;
+    }
+
+    /* 微弱赛博网格背景 */
+    .cyber-grid {
+      position: fixed;
+      inset: 0;
+      background: 
+        linear-gradient(rgba(0, 240, 255, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(192, 38, 211, 0.06) 1px, transparent 1px);
+      background-size: 80px 80px;
+      animation: gridShift 25s linear infinite;
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
+    @keyframes gridShift {
+      from { background-position: 0 0; }
+      to { background-position: 80px 80px; }
+    }
+
+    /* 老旧电视故障闪烁 + 红绿重影 */
+    .glitch {
+      position: relative;
+      animation: glitchFlicker 1.2s infinite linear alternate;
+    }
+    .glitch::before,
+    .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .glitch::before {
+      animation: glitchRed 0.8s infinite linear alternate;
+      color: #ff0033;
+      left: 2px;
+      text-shadow: -2px 0 #00f0ff;
+      clip: rect(0, 900px, 0, 0);
+    }
+    .glitch::after {
+      animation: glitchGreen 1.4s infinite linear alternate;
+      color: #00ff99;
+      left: -2px;
+      text-shadow: 2px 0 #c026d3;
+      clip: rect(0, 900px, 0, 0);
+    }
+
+    @keyframes glitchFlicker {
+      0%, 100% { opacity: 1; }
+      42% { opacity: 1; }
+      43% { opacity: 0.3; }
+      45% { opacity: 1; }
+      70% { opacity: 1; }
+      71% { opacity: 0.6; }
+    }
+    @keyframes glitchRed { 0% { clip: rect(10px, 9999px, 30px, 0); } 100% { clip: rect(80px, 9999px, 120px, 0); } }
+    @keyframes glitchGreen { 0% { clip: rect(50px, 9999px, 90px, 0); } 100% { clip: rect(20px, 9999px, 60px, 0); } }
+
+    .glass {
+      background: rgba(15, 15, 30, 0.75);
+      backdrop-filter: blur(18px);
+      border: 1px solid rgba(0, 240, 255, 0.15);
+      box-shadow: 0 10px 30px -10px rgb(0 240 255);
+    }
+
+    .card {
+      border-radius: 24px;
+      box-shadow: 0 10px 25px -8px rgb(192 38 211);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 25px 50px -12px rgb(192 38 211 / 0.6);
+    }
+
+    .neon-text {
+      text-shadow: 
+        0 0 10px var(--neon-blue),
+        0 0 20px var(--neon-purple),
+        0 0 40px var(--neon-pink);
+    }
+
+    /* 圆形社交按钮 - 斜切科技边框 */
+    .social-btn {
+      width: 56px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15, 15, 30, 0.8);
+      border: 3px solid transparent;
+      border-image: linear-gradient(45deg, #00f0ff, #c026d3) 1;
+      border-radius: 9999px;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+    }
+    .social-btn::after {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      background: linear-gradient(90deg, transparent, rgba(0,240,255,0.4), transparent);
+      transform: translateX(-150%);
+      animation: electric 3s linear infinite;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .social-btn:hover::after {
+      opacity: 1;
+      transform: translateX(300%);
+    }
+    .social-btn:hover {
+      transform: scale(1.25) rotate(12deg);
+      box-shadow: 0 0 40px 15px rgba(0, 240, 255, 0.7);
+    }
+
+    @keyframes electric {
+      0% { transform: translateX(-150%); }
+      100% { transform: translateX(300%); }
+    }
+
+    /* 加载动画 - 依次滑入 */
+    .fade-slide {
+      animation: fadeSlideUp 0.8s ease forwards;
+      opacity: 0;
+    }
+    @keyframes fadeSlideUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* 鼠标跟随霓虹光 */
+    #cursorGlow {
+      position: fixed;
+      width: 380px;
+      height: 380px;
+      background: radial-gradient(circle, rgba(0,240,255,0.25) 20%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      mix-blend-mode: screen;
+      transform: translate(-50%, -50%);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+  </style>
+</head>
+<body class="min-h-screen relative">
+
+  <!-- 微弱网格背景 -->
+  <div class="cyber-grid"></div>
+
+  <!-- 鼠标跟随光效 -->
+  <div id="cursorGlow"></div>
+
+  <div class="max-w-5xl mx-auto px-6 py-12 relative z-10">
+
+    <!-- Hero -->
+    <div class="text-center mb-20">
+      <div class="flex justify-center mb-8">
+        <img src="https://pbs.twimg.com/profile_images/2004407058469474307/UZLT-juV.jpg"
+             alt="Suu Avatar"
+             class="w-40 h-40 rounded-3xl border-4 border-[#00f0ff] shadow-[0_0_60px_-10px_#00f0ff]">
+      </div>
+
+      <!-- 故障霓虹名字 -->
+      <h1 data-text="SUU766" class="glitch title-font text-7xl font-bold tracking-[-3px] neon-text mb-2 inline-block">
+        SUU766
+      </h1>
+      <p class="text-4xl text-[#00f0ff] font-medium">@Suu766</p>
+
+      <!-- 打字机简介 -->
+      <div class="max-w-2xl mx-auto mt-10 text-2xl leading-relaxed font-medium">
+        <span id="typewriter" class="typewriter inline-block"></span>
+      </div>
+
+      <!-- 社交按钮 -->
+      <div id="socialRow" class="flex justify-center gap-8 mt-14 fade-slide" style="animation-delay: 600ms">
+        <a href="https://x.com/Suu766" target="_blank" class="social-btn">
+          <i class="fa-brands fa-x-twitter text-3xl"></i>
+        </a>
+        <a href="https://t.me/Suu7669119" target="_blank" class="social-btn">
+          <i class="fa-brands fa-telegram text-3xl"></i>
+        </a>
+        <a href="https://www.tiktok.com/@suu766.0" target="_blank" class="social-btn">
+          <i class="fa-brands fa-tiktok text-3xl"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- 实时推特主贴 -->
+    <div id="twitterSection" class="mb-20 fade-slide" style="animation-delay: 900ms">
+      <div class="flex items-center justify-between mb-8">
+        <div class="flex items-center gap-4">
+          <i class="fa-brands fa-x-twitter text-4xl text-[#00f0ff]"></i>
+          <h2 class="text-4xl font-semibold title-font neon-text">我的推特主贴</h2>
+        </div>
+        <a href="https://x.com/Suu766" target="_blank"
+           class="flex items-center gap-3 text-[#00f0ff] hover:text-white transition text-lg font-medium">
+          全部推文 <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        </a>
+      </div>
+
+      <div class="glass rounded-3xl p-5 card overflow-hidden">
+        <a class="twitter-timeline" 
+           href="https://twitter.com/Suu766"
+           data-theme="dark"
+           data-width="100%"
+           data-height="680"
+           data-chrome="noheader nofooter noborders transparent"
+           data-tweet-limit="8">
+          Tweets by @Suu766
+        </a>
+      </div>
+
+      <p class="text-center text-xs text-[#00f0ff] mt-6 flex items-center justify-center gap-3">
+        <span class="relative flex h-3 w-3">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00f0ff] opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-3 w-3 bg-[#00f0ff]"></span>
+        </span>
+        实时同步 · 刷新即更新
+      </p>
+    </div>
+
+    <!-- Projects -->
+    <div id="projectsSection" class="mb-20 fade-slide" style="animation-delay: 1200ms">
+      <h2 class="text-3xl font-semibold mb-8 flex items-center gap-4 neon-text">
+        <i class="fa-solid fa-rocket text-[#00f0ff]"></i>
+        Projects
+      </h2>
+      <div class="grid md:grid-cols-3 gap-6">
+        <a href="#" class="glass card p-8 block">
+          <h3 class="font-semibold text-2xl mb-4 neon-text">Web3 Airdrop 教程合集</h3>
+          <p class="text-gray-300 mb-8">专注空投项目拆解与实操教程，帮助大家高效参与空投</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="px-5 py-2 text-xs bg-white/10 rounded-2xl">Notion</span>
+            <span class="px-5 py-2 text-xs bg-white/10 rounded-2xl">Web3</span>
+            <span class="px-5 py-2 text-xs bg-white/10 rounded-2xl">教程</span>
+          </div>
+        </a>
+        <a href="#" class="glass card p-8 block">
+          <h3 class="font-semibold text-2xl mb-4 neon-text">AI 赚钱工具站</h3>
+          <p class="text-gray-300 mb-8">AI 工具整合与赚钱案例分享</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="px-5 py-2 text-xs bg-white/10 rounded-2xl">Python</span>
+            <span class="px-5 py-2 text-xs bg-white/10 rounded-2xl">Flask</span>
+            <span class="px-5 py-2 text-xs bg-white/10 rounded-2xl">AI</span>
+          </div>
+        </a>
+        <div class="glass card p-8 flex flex-col justify-center text-center">
+          <p class="text-[#00f0ff] text-sm font-bold mb-3">COMING SOON 🔥</p>
+          <h3 class="text-2xl font-semibold neon-text">更多赛博项目</h3>
+          <p class="text-gray-400">持续更新中…</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tech Stack -->
+    <div id="stackSection" class="fade-slide" style="animation-delay: 1500ms">
+      <h2 class="text-3xl font-semibold mb-8 flex items-center gap-4 neon-text">
+        <i class="fa-solid fa-laptop-code text-[#00f0ff]"></i>
+        Tech Stack
+      </h2>
+      <div class="flex flex-wrap gap-4">
+        <span class="px-8 py-4 glass rounded-3xl text-sm font-medium neon-text">Python</span>
+        <span class="px-8 py-4 glass rounded-3xl text-sm font-medium neon-text">Flask</span>
+        <span class="px-8 py-4 glass rounded-3xl text-sm font-medium neon-text">Tailwind CSS</span>
+        <span class="px-8 py-4 glass rounded-3xl text-sm font-medium neon-text">Web3.js</span>
+        <span class="px-8 py-4 glass rounded-3xl text-sm font-medium neon-text">Solidity</span>
+        <span class="px-8 py-4 glass rounded-3xl text-sm font-medium neon-text">AI Prompt</span>
+        <span class="px-8 py-4 glass rounded-3xl text-sm font-medium neon-text">Docker</span>
+        <span class="px-8 py-4 glass rounded-3xl text-sm font-medium neon-text">Notion</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 底部小字 -->
+  <footer class="border-t border-white/10 py-8 text-center text-sm text-[#00f0ff]/70 relative z-10">
+    我是 Suu，期待你的关注
+  </footer>
+
+  <!-- X 推文脚本 -->
+  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+  <script>
+    // Tailwind 配置
+    tailwind.config = { content: ["*"] }
+
+    /* 打字机效果 */
+    const bioText = `web3项目拆解｜专注空投教程｜AI赚钱\n想到什么写什么 · All in Web3 & AI`
+    let i = 0
+    const typewriterEl = document.getElementById('typewriter')
+
+    function typeWriter() {
+      if (i < bioText.length) {
+        typewriterEl.textContent += bioText.charAt(i)
+        i++
+        setTimeout(typeWriter, Math.random() * 28 + 18)
+      }
+    }
+
+    /* 鼠标跟随光效 */
+    const glow = document.getElementById('cursorGlow')
+    document.addEventListener('mousemove', (e) => {
+      glow.style.left = `${e.clientX}px`
+      glow.style.top = `${e.clientY}px`
+      glow.style.opacity = '1'
+    })
+
+    /* 初始化 */
+    window.addEventListener('load', () => {
+      // 启动打字机
+      setTimeout(typeWriter, 1200)
+
+      console.log('%c🔥 Suu766 赛博朋克主页已就绪', 'color:#00f0ff;font-size:22px;font-weight:900;text-shadow:0 0 20px #c026d3')
+    })
+  </script>
+</body>
+</html>
